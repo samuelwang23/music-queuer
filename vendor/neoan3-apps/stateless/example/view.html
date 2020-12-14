@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stateless Test</title>
+    <!--  Gaudiamus CSS  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gaudiamus-css@1.1.0/css/gaudiamus.min.css">
+    <!--  AlpineJS  -->
+    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.7.0/dist/alpine.min.js" defer></script>
+</head>
+<body>
+<div class="container m-t-5" x-data="component()">
+    <div class="grid-7-5">
+        <div class="b-r-1 b-primary p-r-5">
+            <p>Your token:</p>
+            <template x-if="data.jwt!==''">
+                <textarea class="w-100 " style="height: 100px" x-model="data.jwt"></textarea>
+            </template>
+            <template x-if="data.jwt===''">
+                <p class="w-100 text-warning font-md">You have no token, please log in  ==></p>
+            </template>
+            <button class="p-4 bg-secondary b-0" @click="call">make a test-call</button>
+            <div class="m-t-5">
+                <template x-if="data.decoded.iss">
+                    <div>
+                        <div class="grid-6-6">
+                            <p>iss</p>
+                            <p x-text="data.decoded.iss"></p>
+                            <p>jti</p>
+                            <p x-text="data.decoded.jti"></p>
+                            <p>aud</p>
+                            <p x-text="data.decoded.aud"></p>
+                            <p>iat</p>
+                            <p x-text="data.decoded.iat"></p>
+                            <p>scope</p>
+                            <p x-text="JSON.stringify(data.decoded.scope)"></p>
+                            <p>custom payload</p>
+                            <p x-text="data.decoded.custom"></p>
+                        </div>
+                        <p class="font-md">So far so good. Now try to alter the token and try another test-call</p>
+                    </div>
+
+                </template>
+
+            </div>
+        </div>
+        <form class="m-l-2" method="post">
+            <div class="grid-6-6">
+                <div class="p-4">
+                    <label for="username">Username</label>
+                    <input name="username" type="text" id="username" placeholder="demo">
+                </div>
+                <div class="p-4">
+                    <label for="password">Password</label>
+                    <input name="password" type="text" id="password" placeholder="123456">
+                </div>
+                <div class="p-4">
+                    Username: demo, Password: 123456
+                </div>
+                <div class="place-x-center p-4">
+                    <button class="b-0 bg-primary text-white p-x-2 p-y-1 hover:raise-1-gray" type="submit">login</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</div>
+<script>
+    function component(){
+        return {
+            data:{
+                jwt: '{{jwt}}',
+                decoded:{}
+            },
+            call(){
+                this.data.decoded = {};
+                fetch('index.php?token=' + this.data.jwt)
+                    .then(j => j.json())
+                    .then(res => this.data.decoded = res)
+                    .catch(e => alert('unauthorized'))
+            }
+        }
+    }
+</script>
+
+</body>
+</html>

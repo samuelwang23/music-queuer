@@ -1,0 +1,20 @@
+{
+    "name": "neoan3-apps/jwt",
+    "description": "neoan3 wrapper for JSON WEB TOKEN using Firebase",
+    "require": {
+        "firebase/php-jwt": "^5.0"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Stefan Roehrl",
+            "homepage": "http://neoan.us"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Neoan3\\Apps\\": "./"
+        }
+
+    }
+}
