@@ -50,5 +50,5 @@ class ArtistModel implements Model{
             }
         }
     }
-
+    
 }
