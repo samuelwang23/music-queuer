@@ -14,6 +14,29 @@ use Neoan3\Frame\Demo;
 class SearchController extends Demo{
 
     /**
+     * transformSpotify
+     * @param array $spotifyData
+     * @param array $result
+     */
+
+     function transformSpotify(array $spotifyData): array
+     {
+         $results = [];
+         foreach($spotifyData["albums"]["items"] as $album){
+             $result = [];
+             $result["artist"] = $album["artists"][0]["name"];
+             $result["title"] = $album["name"];
+             $result["art"] = $album["images"][1]["url"];
+             $result["release"] = $album["release_date"];
+             $result["id"] = $album["id"];
+             array_push($results, $result);
+             
+         }
+         return $results;
+     }
+
+
+    /**
     * GET: api.v1/search
     * GET: api.v1/search/{id}
     * GET: api.v1/search?{query-string}
@@ -22,8 +45,34 @@ class SearchController extends Demo{
     */
     function getSearch(array $params = []): array
     {
-        $results = [["artist"=> "Artist1", "album" => "album1", "art" => ""], ["artist"=> "Artist2", "album" => "album2"], ["artist"=> "Artist3", "album" => "album3"]];
-        return $results;
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api.spotify.com/v1/search?q='.$params['q'].'&type=album&limit=12');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'GET');
+
+
+        $headers = array();
+        $headers[] = 'Accept: application/json';
+        $headers[] = 'Content-Type: application/json';
+        $token = 'BQBBqbAP7h6rdVSnuMffr4JtqTKWu2i2GbHN-QJoYfFvnkNaFWyRfJEG5lxc9d1-oEb25EFKsO1WZypeRykEMZmrJ7kKQw4laaHlU-LrZQMokCcuYX55MR78OWUE-Cr3Ioa0qPHef9pWne2uYs7P2PU9H1sFZxo';
+        $headers[] = 'Authorization: Bearer '.$token;
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = curl_exec($ch);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close($ch);
+        
+        
+
+        return $this->transformSpotify(json_decode($result, true));
+        
+        // $results = [
+        //             ["artist"=> "Artist1", "title" => "album1", "art" => "https://2.imimg.com/data2/XY/WO/MY-769630/chlorophlly-green-colour-oil-soluble-250x250.jpg"],
+        //             ["artist"=> "Artist2", "title" => "album2", "art" => "https://i5.walmartimages.com/asr/440727cf-e249-4021-b746-6ec0a097e172.6e712d4ba48c1168a6438d63b07a6568.jpeg"], 
+        //             ["artist"=> "Artist3", "title" => "album3", "art" =>"https://vwoccasion.co.uk/wp-content/uploads/2017/01/bright-green-square-300x300.jpg"]];
+        // return $results;
     }
 
     /**
