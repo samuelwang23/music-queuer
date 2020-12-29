@@ -22,6 +22,9 @@ class SearchController extends Demo{
      function transformSpotify(array $spotifyData): array
      {
          $results = [];
+         if(!isset($spotifyData["albums"])){
+             return [];
+         }
          foreach($spotifyData["albums"]["items"] as $album){
              $result = [];
              $result["artist"] = $album["artists"][0]["name"];
@@ -29,9 +32,11 @@ class SearchController extends Demo{
              $result["art"] = $album["images"][1]["url"];
              $result["release"] = $album["release_date"];
              $result["id"] = $album["id"];
+             $result["link"] = $album["external_urls"]["spotify"];
              array_push($results, $result);
              
          }
+
          return $results;
      }
 
@@ -54,7 +59,7 @@ class SearchController extends Demo{
         $headers = array();
         $headers[] = 'Accept: application/json';
         $headers[] = 'Content-Type: application/json';
-        $token = 'BQBBqbAP7h6rdVSnuMffr4JtqTKWu2i2GbHN-QJoYfFvnkNaFWyRfJEG5lxc9d1-oEb25EFKsO1WZypeRykEMZmrJ7kKQw4laaHlU-LrZQMokCcuYX55MR78OWUE-Cr3Ioa0qPHef9pWne2uYs7P2PU9H1sFZxo';
+        $token = 'BQDefFfaKf0mVjoVIx66cPicgkP_p3ZxvL6uSFvjE2ersgdFtEoBEh_50zEG9oTWOZC6QCoe7VXZcSsNnE9lUMQYDdiaQuP_kvQi9vryZWqwihEWLBYbIbYJMfM_uCzYH29f4Bu_FWc8Vh6GpLO2km7aESENIyk';
         $headers[] = 'Authorization: Bearer '.$token;
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -65,7 +70,7 @@ class SearchController extends Demo{
         curl_close($ch);
         
         
-
+        
         return $this->transformSpotify(json_decode($result, true));
         
         // $results = [

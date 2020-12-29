@@ -1,7 +1,7 @@
 <?php
 
 namespace Neoan3\Component\Album;
-
+use Neoan3\Model\Album\AlbumModel;
 use Neoan3\Frame\Demo;
 
 /**
@@ -37,10 +37,9 @@ class AlbumController extends Demo{
     /**
      * POST: api.v1/album
      * @param $body
-     * @return array
      */
-    function postAlbum(array $body): array
+    function postAlbum(array $body)
     {
-        return $body;
+        $this->loadModel(AlbumModel::class)::create($body);
     }
 }
