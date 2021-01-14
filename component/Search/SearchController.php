@@ -29,7 +29,7 @@ class SearchController extends Demo{
              $result = [];
              $result["artist"] = $album["artists"][0]["name"];
              $result["title"] = $album["name"];
-             $result["art"] = $album["images"][1]["url"];
+             $result["cover"] = $album["images"][1]["url"];
              $result["release"] = $album["release_date"];
              $result["id"] = $album["id"];
              $result["link"] = $album["external_urls"]["spotify"];
@@ -59,7 +59,7 @@ class SearchController extends Demo{
         $headers = array();
         $headers[] = 'Accept: application/json';
         $headers[] = 'Content-Type: application/json';
-        $token = 'BQDefFfaKf0mVjoVIx66cPicgkP_p3ZxvL6uSFvjE2ersgdFtEoBEh_50zEG9oTWOZC6QCoe7VXZcSsNnE9lUMQYDdiaQuP_kvQi9vryZWqwihEWLBYbIbYJMfM_uCzYH29f4Bu_FWc8Vh6GpLO2km7aESENIyk';
+        $token = 'BQBBTdJ1YTrNvtgLe-BFQhdQwFq9879QPe4nE84sOCSlEaPdtsQ5jBOxrzkQ7Um60lbQTjB2r9Q19S5Mg2yG-PSsnmZdSGxiWiImVdIgLan5Ve0wAG4vIEuJAa5DYrGPI3Vm4256BlJ8HB1A5DbCM0QU-kTOoms';
         $headers[] = 'Authorization: Bearer '.$token;
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
@@ -72,12 +72,6 @@ class SearchController extends Demo{
         
         
         return $this->transformSpotify(json_decode($result, true));
-        
-        // $results = [
-        //             ["artist"=> "Artist1", "title" => "album1", "art" => "https://2.imimg.com/data2/XY/WO/MY-769630/chlorophlly-green-colour-oil-soluble-250x250.jpg"],
-        //             ["artist"=> "Artist2", "title" => "album2", "art" => "https://i5.walmartimages.com/asr/440727cf-e249-4021-b746-6ec0a097e172.6e712d4ba48c1168a6438d63b07a6568.jpeg"], 
-        //             ["artist"=> "Artist3", "title" => "album3", "art" =>"https://vwoccasion.co.uk/wp-content/uploads/2017/01/bright-green-square-300x300.jpg"]];
-        // return $results;
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace Neoan3\Component\Album;
 use Neoan3\Model\Album\AlbumModel;
 use Neoan3\Frame\Demo;
+use Neoan3\Provider\Model\Model;
 
 /**
  * Class AlbumController
@@ -26,20 +27,20 @@ class AlbumController extends Demo{
         // Restrict access to logged in users?
         // $this->Auth->restrict();
         // (or without dependency on Demo-Frame: $this->provider['auth']->restrict())
-        return $this->loadModel(\Neoan3\Model\Album\AlbumModel::class)::find([]);
-        // if($id){
-        //     // Retrieve a model?
-        //     // return $this->loadModel(\Neoan3\Model\Album\AlbumModel::class)::get($id);
-        // }
-        // return $params;
+        if($id){
+            // Retrieve a model?
+            return $this->loadModel(AlbumModel::class)::get($id);
+        }
+        return $params;
     }
 
     /**
      * POST: api.v1/album
      * @param $body
+     * @return $array
      */
-    function postAlbum(array $body)
+    function postAlbum(array $body): array
     {
-        $this->loadModel(AlbumModel::class)::create($body);
+        return $this->loadModel(AlbumModel::class)::create($body);
     }
 }

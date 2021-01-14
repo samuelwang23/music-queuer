@@ -51,4 +51,15 @@ class QueueModel implements Model{
         }
     }
 
+    public static function complete()
+    {
+        $ids = self::$db->easy("queue.id", [], ["orderBy" => ["queue.position", "ASC"]]);
+        $results = [];
+        foreach($ids as $id){
+            $results[] = self::get($id["id"]);
+        }
+        return $results;
+    }
+
+
 }

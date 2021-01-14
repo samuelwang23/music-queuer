@@ -1,7 +1,7 @@
 <?php
 
 namespace Neoan3\Component\Queue;
-
+use Neoan3\Model\Queue\QueueModel;
 use Neoan3\Frame\Demo;
 
 /**
@@ -28,18 +28,33 @@ class QueueController extends Demo{
         // (or without dependency on Demo-Frame: $this->provider['auth']->restrict())
         if($id){
             // Retrieve a model?
-            // return $this->loadModel(\Neoan3\Model\Queue\QueueModel::class)::get($id);
+            return $this->loadModel(\Neoan3\Model\Queue\QueueModel::class)::get($id);
         }
-        return $params;
+        return $this->loadModel(\Neoan3\Model\Queue\QueueModel::class)::complete();
     }
 
     /**
      * POST: api.v1/queue
      * @param $body
-     * @return array
      */
-    function postQueue(array $body): array
+    function postQueue(array $body)
     {
-        return $body;
+        $position = $this->provider['db']->easy("queue.position", [], ["orderBy" => ["queue.position", "DESC"], "limit" => [0,1]]);
+        $body["position"] = (empty($position)) ? 1 : $position[0]["position"] + 1;
+        var_dump($body);
+        return $this->loadModel(QueueModel::class)::create($body);
     }
+
+    function putQueue(array $params)
+    {
+        $i = 1;
+        foreach($params as $queueItem){
+            $queueItem["position"] = $i;
+            $queueItem["id"] = "$".$queueItem["id"];
+            $this->provider['db']->ask("queue", $queueItem, ["id" => $queueItem["id"]]);
+            $i++;
+        }
+        return $this->getQueue();
+    }
+
 }
