@@ -40,6 +40,36 @@ class SearchController extends Demo{
          return $results;
      }
 
+     /**
+      * @return string
+      */
+    function getAuthToken(): string
+    {
+        $music_queuer_creds = getCredentials()["music-queuer"];
+        $CLIENT_ID = $music_queuer_creds["spotify_client_id"];
+        $CLIENT_SECRET = $music_queuer_creds["spotify_client_secret"];
+        $authorization =  base64_encode($CLIENT_ID.":".$CLIENT_SECRET);
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, 'https://accounts.spotify.com/api/token');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "grant_type=client_credentials");
+
+        $headers = array();
+        $headers[] = 'Authorization: Basic '.$authorization;
+        $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $result = json_decode(curl_exec($ch), true);
+        if (curl_errno($ch)) {
+            echo 'Error:' . curl_error($ch);
+        }
+        curl_close($ch);
+        return $result["access_token"];
+
+    }
 
     /**
     * GET: api.v1/search
@@ -50,6 +80,8 @@ class SearchController extends Demo{
     */
     function getSearch(array $params = []): array
     {
+        $token = $this->getAuthToken();
+        
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://api.spotify.com/v1/search?q='.$params['q'].'&type=album&limit=12');
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -59,7 +91,7 @@ class SearchController extends Demo{
         $headers = array();
         $headers[] = 'Accept: application/json';
         $headers[] = 'Content-Type: application/json';
-        $token = 'BQBBTdJ1YTrNvtgLe-BFQhdQwFq9879QPe4nE84sOCSlEaPdtsQ5jBOxrzkQ7Um60lbQTjB2r9Q19S5Mg2yG-PSsnmZdSGxiWiImVdIgLan5Ve0wAG4vIEuJAa5DYrGPI3Vm4256BlJ8HB1A5DbCM0QU-kTOoms';
+        
         $headers[] = 'Authorization: Bearer '.$token;
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
