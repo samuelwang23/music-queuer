@@ -28,21 +28,25 @@ class QueueController extends Demo{
         // (or without dependency on Demo-Frame: $this->provider['auth']->restrict())
         if($id){
             // Retrieve a model?
-            return $this->loadModel(\Neoan3\Model\Queue\QueueModel::class)::get($id);
+            return $this->loadModel(\Neoan3\Model\Queue\QueueModel::class)::complete($id);
         }
-        return $this->loadModel(\Neoan3\Model\Queue\QueueModel::class)::complete();
+        //return $this->loadModel(\Neoan3\Model\Queue\QueueModel::class)::complete();
     }
 
     /**
      * POST: api.v1/queue
+     * @param string|null $id
      * @param $body
      */
-    function postQueue(array $body)
+    function postQueue(?string $id = null, array $body)
     {
-        $position = $this->provider['db']->easy("queue.position", [], ["orderBy" => ["queue.position", "DESC"], "limit" => [0,1]]);
-        $body["position"] = (empty($position)) ? 1 : $position[0]["position"] + 1;
-        var_dump($body);
-        return $this->loadModel(QueueModel::class)::create($body);
+        if($id != null){
+            $position = $this->provider['db']->easy("queue_item.position", ["queue_id"=>hex2bin($id)], ["orderBy" => ["queue_item.position", "DESC"], "limit" => [0,1]]);
+            $body["position"] = (empty($position)) ? 1 : $position[0]["position"] + 1;
+            $body["queue_id"] = $id;
+            return $this->loadModel(QueueModel::class)::newQueueItem($id, $body);
+        }
+        return $body;
     }
 
     function putQueue(array $params)

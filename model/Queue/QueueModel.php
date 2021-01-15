@@ -51,7 +51,10 @@ class QueueModel implements Model{
         }
     }
 
-    public static function complete()
+    /**
+     * @param string $id
+     */
+    public static function complete(string $id)
     {
         $ids = self::$db->easy("queue.id", [], ["orderBy" => ["queue.position", "ASC"]]);
         $results = [];
@@ -61,5 +64,16 @@ class QueueModel implements Model{
         return $results;
     }
 
+    /**
+     * @params string $id
+     * @params array $body
+     * @return array 
+     */
+    public static function newQueueItem(string $id, array $body)
+    {
+        $body["queue_id"] = hex2bin($body["queue_id"]);
+        $body["item_id"] = hex2bin($body["item_id"]);
+        return self::$db->smart("queue_item", $body);
+    }
 
 }
