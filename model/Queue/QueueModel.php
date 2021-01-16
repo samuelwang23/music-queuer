@@ -69,11 +69,23 @@ class QueueModel implements Model{
      * @params array $body
      * @return array 
      */
-    public static function newQueueItem(string $id, array $body)
+    public static function newQueueItem(string $id, array $body): array
     {
         $body["queue_id"] = hex2bin($body["queue_id"]);
         $body["item_id"] = hex2bin($body["item_id"]);
         return self::$db->smart("queue_item", $body);
+    }
+
+    /**
+     * @params array $queue
+     * @return QueueModel
+     */
+    public static function position(array $queue)//: QueueModel
+    {
+        foreach($queue["queue_item"] as $pos => $item){
+            $queue["queue_item"][$pos]["position"] = $pos + 1;
+        }
+        return self::update($queue);
     }
 
 }

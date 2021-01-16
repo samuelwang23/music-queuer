@@ -21,7 +21,7 @@ class QueueController extends Demo{
     * @param array $params
     * @return array
     */
-    function getQueue(?string $id = null, array $params = []): array
+    function getQueue(?string $id = null, array $params = [])//: array
     {
         // Restrict access to logged in users?
         // $this->Auth->restrict();
@@ -35,30 +35,16 @@ class QueueController extends Demo{
 
     /**
      * POST: api.v1/queue
-     * @param string|null $id
      * @param $body
      */
-    function postQueue(?string $id = null, array $body)
+    function postQueue(array $body)
     {
-        if($id != null){
-            $position = $this->provider['db']->easy("queue_item.position", ["queue_id"=>hex2bin($id)], ["orderBy" => ["queue_item.position", "DESC"], "limit" => [0,1]]);
-            $body["position"] = (empty($position)) ? 1 : $position[0]["position"] + 1;
-            $body["queue_id"] = $id;
-            return $this->loadModel(QueueModel::class)::newQueueItem($id, $body);
-        }
-        return $body;
+        return $this->loadModel(QueueModel::class)::create($body);
     }
 
     function putQueue(array $params)
     {
-        $i = 1;
-        foreach($params as $queueItem){
-            $queueItem["position"] = $i;
-            $queueItem["id"] = "$".$queueItem["id"];
-            $this->provider['db']->ask("queue", $queueItem, ["id" => $queueItem["id"]]);
-            $i++;
-        }
-        return $this->getQueue();
+        return $this->loadModel(QueueModel::class)::position($params);
     }
 
 }
